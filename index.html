@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>حلواني طلعت </title>
+</head>
+
+<body class="bg-light">
+
+<div class="container my-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="m-0 fw-bold">🍰 نظام كاشير حلواني طلعت</h3>
+    <span class="text-muted small">Desktop First • LocalStorage • CRUD</span>
+  </div>
+
+  <!-- فورم إضافة/تعديل -->
+  <div class="card shadow-sm mb-4 bg-img">
+    <div class="card-header bg-dark text-white">إضافة / تعديل أوردر</div>
+    <div class="card-body">
+
+      <!-- هنستخدمه لتحديد هل تعديل ولا إضافة -->
+      <input type="hidden" id="editIndex" value="">
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label">اسم العميل</label>
+          <input id="customerName" class="form-control" placeholder="مثال: محمد">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">رقم الموبايل</label>
+          <input id="phone" class="form-control" placeholder="010xxxxxxxx">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">العنوان</label>
+          <input id="address" class="form-control" placeholder="فيصل - شارع ...">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label">التصنيف</label>
+          <select id="categorySelect" class="form-select"></select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">الصنف</label>
+          <select id="productSelect" class="form-select"></select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">الكمية</label>
+          <input id="qty" type="number" min="1" value="1" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">السعر</label>
+          <input id="price" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-success" type="button" id="btnAddItem">➕ إضافة منتج</button>
+        <button class="btn btn-outline-secondary" type="button" id="btnClearCart">🧹 تفريغ المنتجات</button>
+      </div>
+
+      <!-- جدول السلة -->
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>الصنف</th>
+              <th>الكمية</th>
+              <th>السعر</th>
+              <th>الإجمالي</th>
+              <th>حذف</th>
+            </tr>
+          </thead>
+          <tbody id="cartTable"></tbody>
+        </table>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">ملاحظات</label>
+          <textarea id="notes" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">صورة الأوردر</label>
+          <input id="imageInput" type="file" accept="image/*" class="form-control">
+          <img id="previewImage" class="mt-2" alt="preview">
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between">
+        <h5 class="m-0">الإجمالي: <span id="totalPrice">0</span> جنيه</h5>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" type="button" id="btnSaveOrder">💾 حفظ الأوردر</button>
+          <button class="btn btn-outline-danger" type="button" id="btnNewOrder">↩️ جديد</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- بحث -->
+  <input id="search" class="form-control mb-3" placeholder="🔍 بحث باسم العميل...">
+
+  <!-- جدول الأوردرات -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+      <span>قائمة الأوردرات</span>
+      <button class="btn btn-sm btn-outline-light" id="btnClearAll">مسح كل الأوردرات</button>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>الصورة</th>
+              <th>العميل</th>
+              <th>الموبايل</th>
+              <th>العنوان</th>
+              <th>الإجمالي</th>
+              <th>تعديل</th>
+              <th>طباعة</th>
+              <th>حذف</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- قالب الفاتورة (مخفي) -->
+<div id="invoiceTemplate" class="d-none">
+  <div class="invoice-wrap">
+    <h4 class="text-center m-0">🍰 حلواني طلعت</h4>
+    <div class="text-center">فاتورة بيع</div>
+    <div class="invoice-hr"></div>
+
+    <div><b>رقم الأوردر:</b> <span id="invOrderId"></span></div>
+    <div><b>اسم العميل:</b> <span id="invName"></span></div>
+    <div><b>الموبايل:</b> <span id="invPhone"></span></div>
+    <div><b>العنوان:</b> <span id="invAddress"></span></div>
+
+    <div class="invoice-hr"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th>
+        </tr>
+      </thead>
+      <tbody id="invItems"></tbody>
+    </table>
+
+    <div class="invoice-hr"></div>
+    <div class="text-end fw-bold">الإجمالي: <span id="invTotal"></span> جنيه</div>
+
+    <div class="invoice-hr"></div>
+    <div class="text-center fw-bold">❤️ شكرًا لتشريفكم حلواني طلعت</div>
+    <div class="text-center">نتمنى لكم يوم سعيد 🌸</div>
+  </div>
+</div>
+
+    
+    <script src="js/main.js"></script>
+    <script src="js/bootstrap.js"></script>
+</body>
+</html>
